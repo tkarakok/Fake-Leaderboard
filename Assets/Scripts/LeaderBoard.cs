@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -12,6 +13,9 @@ public class LeaderBoard : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     List<KeyValuePair<string, int>> _players = new List<KeyValuePair<string, int>>();
 
+    private int _count = 10; 
+    private int _playerId = 0; 
+    
     private void Start()
     {
         AddPlayers(50);
@@ -22,18 +26,22 @@ public class LeaderBoard : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             SetLeaderboardsTextValues(3);
+            StartCoroutine(Effect());
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
             SetLeaderboardsTextValues(2);
+            StartCoroutine(Effect());
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
             SetLeaderboardsTextValues(1);
+            StartCoroutine(Effect());
         }
         else if(Input.GetKeyDown(KeyCode.F))
         {
             SetLeaderboardsTextValues(Random.Range(4, 10000));
+            StartCoroutine(Effect());
         }
     }
 
@@ -49,10 +57,12 @@ public class LeaderBoard : MonoBehaviour
     private void SetLeaderboardsTextValues(int id)
     {
         ResetTextColors();
+        ResetTextScale();
         TMP_Text _playerNameText;
         TMP_Text _playerNumberText;
         // int _playerValue = Random.Range(1, 500);
         int _playerValue = id;
+        this._playerId = id; 
 
         if (_playerValue < 4)
         {
@@ -73,6 +83,8 @@ public class LeaderBoard : MonoBehaviour
             _playerNumberText.text = "#" + _playerValue.ToString();
         }
 
+        _playerNameText.transform.parent.parent.localScale = Vector3.one * 1.2f;
+        
         if (_playerValue == 1)
         {
             for (int i = 1; i < _fakeNamesTexts.Count; i++)
@@ -134,6 +146,17 @@ public class LeaderBoard : MonoBehaviour
         }
     }
 
+    private IEnumerator Effect()
+    {
+        _count = 0;
+        while (_count < 11)
+        {
+            _count++;
+            SetLeaderboardsTextValues(_playerId - 1);
+            yield return new WaitForSeconds((_count + 1) * .033f);
+        }
+    }
+    
     private void ResetTextColors()
     {
         for (int i = 0; i < _fakeNamesTexts.Count; i++)
@@ -146,4 +169,12 @@ public class LeaderBoard : MonoBehaviour
             _fakeNumbersTexts[i].color = Color.white;
         }
     }
+
+    private void ResetTextScale()
+    {
+        for (int i = 0; i < _fakeNamesTexts.Count; i++)
+        {
+            _fakeNamesTexts[i].transform.parent.parent.localScale = Vector3.one;
+        }
+    } 
 }
