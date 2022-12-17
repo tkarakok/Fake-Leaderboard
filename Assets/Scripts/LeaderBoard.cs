@@ -14,7 +14,8 @@ public class LeaderBoard : MonoBehaviour
     List<KeyValuePair<string, int>> _players = new List<KeyValuePair<string, int>>();
 
     private int _count = 10; 
-    private int _playerId = 0; 
+    private int _playerId = 0;
+    private int _visualizePlayerId = 0;
     
     private void Start()
     {
@@ -25,24 +26,10 @@ public class LeaderBoard : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            SetLeaderboardsTextValues(3);
+            SetPlayerId(Random.Range(1 , 13));
             StartCoroutine(Effect());
         }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            SetLeaderboardsTextValues(2);
-            StartCoroutine(Effect());
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            SetLeaderboardsTextValues(1);
-            StartCoroutine(Effect());
-        }
-        else if(Input.GetKeyDown(KeyCode.F))
-        {
-            SetLeaderboardsTextValues(Random.Range(4, 10000));
-            StartCoroutine(Effect());
-        }
+       
     }
 
     private void AddPlayers(int count)
@@ -54,6 +41,12 @@ public class LeaderBoard : MonoBehaviour
         }
     }
 
+    private void SetPlayerId(int id)
+    {
+        this._playerId = id;
+        _visualizePlayerId = _playerId + 10;
+        SetLeaderboardsTextValues(_visualizePlayerId);
+    }
     private void SetLeaderboardsTextValues(int id)
     {
         ResetTextColors();
@@ -62,7 +55,6 @@ public class LeaderBoard : MonoBehaviour
         TMP_Text _playerNumberText;
         // int _playerValue = Random.Range(1, 500);
         int _playerValue = id;
-        this._playerId = id; 
 
         if (_playerValue < 4)
         {
@@ -148,12 +140,12 @@ public class LeaderBoard : MonoBehaviour
 
     private IEnumerator Effect()
     {
-        _count = 0;
-        while (_count < 11)
+        _count = 1;
+        while (_count < 10)
         {
             _count++;
-            SetLeaderboardsTextValues(_playerId - 1);
-            yield return new WaitForSeconds((_count + 1) * .033f);
+            SetLeaderboardsTextValues(_visualizePlayerId - _count);
+            yield return new WaitForSeconds((_count) * .033f);
         }
     }
     
