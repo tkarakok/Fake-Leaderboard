@@ -11,33 +11,37 @@ public class LeaderBoard : MonoBehaviour
     [SerializeField] private List<TMP_Text> _fakeNamesTexts;
     [SerializeField] private List<TMP_Text> _fakeNumbersTexts;
     [SerializeField] private GameManager _gameManager;
-    List<KeyValuePair<string, int>> _players = new List<KeyValuePair<string, int>>();
+    private Dictionary<string, int> _players = new Dictionary<string, int>();
+
 
     private int _count = 10; 
     private int _playerId = 0;
     private int _visualizePlayerId = 0;
     
-    private void Start()
-    {
-        AddPlayers(50);
-    }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            SetPlayerId(Random.Range(1 , 13));
+            int rnd = Random.Range(1, 100);
+            SetPlayerId(rnd);
+            AddPlayers(_visualizePlayerId);
+            //SetLeaderboardsTextValues(_visualizePlayerId);
             StartCoroutine(Effect());
         }
-       
     }
 
-    private void AddPlayers(int count)
+    private void AddPlayers(int _playerId)
     {
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < 30; i++)
         {
-            _players.Add(new KeyValuePair<string, int>(_gameManager.GetRandomCharacterName(),
-                Random.Range(100, 10000)));
+            if (i < 15)
+            {
+                _players.Add(_gameManager.GetRandomCharacterName(), _playerId - (15 - (i + 1)));
+            }
+            else
+            {
+                _players.Add(_gameManager.GetRandomCharacterName(), _playerId + (i - 15));
+            }
         }
     }
 
@@ -45,15 +49,16 @@ public class LeaderBoard : MonoBehaviour
     {
         this._playerId = id;
         _visualizePlayerId = _playerId + 10;
-        SetLeaderboardsTextValues(_visualizePlayerId);
     }
+    
     private void SetLeaderboardsTextValues(int id)
     {
         ResetTextColors();
         ResetTextScale();
+        
         TMP_Text _playerNameText;
         TMP_Text _playerNumberText;
-        // int _playerValue = Random.Range(1, 500);
+        
         int _playerValue = id;
 
         if (_playerValue < 4)
@@ -81,8 +86,8 @@ public class LeaderBoard : MonoBehaviour
         {
             for (int i = 1; i < _fakeNamesTexts.Count; i++)
             {
-                KeyValuePair<string, int> _player = _players[Random.Range(0, _players.Count)];
-                _fakeNumbersTexts[i].text = "#" + (_playerValue + (i)).ToString();
+                KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue + (i))).First();
+                _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                 _fakeNamesTexts[i].text = _player.Key.ToString();
             }
         }
@@ -90,15 +95,17 @@ public class LeaderBoard : MonoBehaviour
         {
             for (int i = 0; i < _fakeNamesTexts.Count; i++)
             {
-                KeyValuePair<string, int> _player = _players[Random.Range(0, _players.Count)];
+                
                 if (i < 1)
                 {
-                    _fakeNumbersTexts[i].text = "#" + (_playerValue - 1).ToString();
+                    KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue - 1)).First();
+                    _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                     _fakeNamesTexts[i].text = _player.Key.ToString();
                 }
                 else if (i > 1)
                 {
-                    _fakeNumbersTexts[i].text = "#" + (_playerValue + (i - 1)).ToString();
+                    KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue + (i - 1))).First();
+                    _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                     _fakeNamesTexts[i].text = _player.Key.ToString();
                 }
             }
@@ -107,15 +114,17 @@ public class LeaderBoard : MonoBehaviour
         {
             for (int i = 0; i < _fakeNamesTexts.Count; i++)
             {
-                KeyValuePair<string, int> _player = _players[Random.Range(0, _players.Count)];
+                
                 if (i < 2)
                 {
-                    _fakeNumbersTexts[i].text = "#" + (_playerValue - (2 - i)).ToString();
+                    KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue - (2 - i))).First();
+                    _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                     _fakeNamesTexts[i].text = _player.Key.ToString();
                 }
                 else if (i > 2)
                 {
-                    _fakeNumbersTexts[i].text = "#" + (_playerValue + (i - 2)).ToString();
+                    KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue + (i - 2))).First();
+                    _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                     _fakeNamesTexts[i].text = _player.Key.ToString();
                 }
             }
@@ -124,15 +133,15 @@ public class LeaderBoard : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                KeyValuePair<string, int> _player = _players[Random.Range(0, _players.Count)];
-                _fakeNumbersTexts[i].text = "#" + (_playerValue - (3 - i)).ToString();
+                KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue - (3 - i))).First();
+                _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                 _fakeNamesTexts[i].text = _player.Key.ToString();
             }
 
             for (int i = 4; i < _fakeNamesTexts.Count; i++)
             {
-                KeyValuePair<string, int> _player = _players[Random.Range(0, _players.Count)];
-                _fakeNumbersTexts[i].text = "#" + (_playerValue + (i - 3)).ToString();
+                KeyValuePair<string, int> _player = _players.Where(a => a.Value == (_playerValue + (i - 3))).First();
+                _fakeNumbersTexts[i].text = "#" + _player.Value.ToString();
                 _fakeNamesTexts[i].text = _player.Key.ToString();
             }
         }
@@ -141,10 +150,11 @@ public class LeaderBoard : MonoBehaviour
     private IEnumerator Effect()
     {
         _count = 1;
-        while (_count < 10)
+        while (_count < 11)
         {
             _count++;
-            SetLeaderboardsTextValues(_visualizePlayerId - _count);
+            _visualizePlayerId --;
+            SetLeaderboardsTextValues(_visualizePlayerId);
             yield return new WaitForSeconds((_count) * .033f);
         }
     }
