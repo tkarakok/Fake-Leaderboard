@@ -67,21 +67,18 @@ public class LeaderBoard : MonoBehaviour
         {
             _playerNameText = _fakeNamesTexts[_playerValue - 1];
             _playerNumberText = _fakeNumbersTexts[_playerValue - 1];
-            _playerNameText.color = Color.green;
-            _playerNumberText.color = Color.green;
-            _playerNameText.text = "PLAYER";
-            _playerNumberText.text = "#" + _playerValue.ToString();
         }
         else
         {
             _playerNameText = _fakeNamesTexts[3];
             _playerNumberText = _fakeNumbersTexts[3];
-            _playerNameText.color = Color.green;
-            _playerNumberText.color = Color.green;
-            _playerNameText.text = "PLAYER";
-            _playerNumberText.text = "#" + _playerValue.ToString();
         }
 
+        _playerNameText.color = Color.green;
+        _playerNumberText.color = Color.green;
+        _playerNameText.text = "YOU";
+        _playerNumberText.text = "#" + _playerValue.ToString();
+        
         Transform _playerTextTransform = _playerNameText.transform.parent.parent;
         _playerTextTransform.SetParent(transform);
         _playerTextTransform.GetComponent<Outline>().enabled = true;
