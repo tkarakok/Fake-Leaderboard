@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class LeaderBoard : MonoBehaviour
@@ -11,8 +13,8 @@ public class LeaderBoard : MonoBehaviour
     [SerializeField] private List<TMP_Text> _fakeNamesTexts;
     [SerializeField] private List<TMP_Text> _fakeNumbersTexts;
     [SerializeField] private GameManager _gameManager;
+    
     private Dictionary<string, int> _players = new Dictionary<string, int>();
-
 
     private int _count = 10; 
     private int _playerId = 0;
@@ -34,7 +36,7 @@ public class LeaderBoard : MonoBehaviour
     {
         for (int i = 0; i < 30; i++)
         {
-            if (i < 15)
+            if (i <= 15)
             {
                 _players.Add(_gameManager.GetRandomCharacterName(), _playerId - (15 - (i + 1)));
             }
@@ -80,7 +82,10 @@ public class LeaderBoard : MonoBehaviour
             _playerNumberText.text = "#" + _playerValue.ToString();
         }
 
-        _playerNameText.transform.parent.parent.localScale = Vector3.one * 1.2f;
+        Transform _playerTextTransform = _playerNameText.transform.parent.parent;
+        _playerTextTransform.SetParent(transform);
+        _playerTextTransform.GetComponent<Outline>().enabled = true;
+        _playerTextTransform.localScale = Vector3.one * 1.25f;
         
         if (_playerValue == 1)
         {
@@ -145,6 +150,14 @@ public class LeaderBoard : MonoBehaviour
                 _fakeNamesTexts[i].text = _player.Key.ToString();
             }
         }
+
+        if (_visualizePlayerId == _playerId)
+        {
+            _playerTextTransform.DOScale(Vector3.one, .5f).SetEase(Ease.InOutBack).OnComplete(() =>
+            {
+                _playerTextTransform.SetParent(transform.GetChild(0));
+            });
+        }
     }
 
     private IEnumerator Effect()
@@ -177,6 +190,7 @@ public class LeaderBoard : MonoBehaviour
         for (int i = 0; i < _fakeNamesTexts.Count; i++)
         {
             _fakeNamesTexts[i].transform.parent.parent.localScale = Vector3.one;
+            _fakeNamesTexts[i].transform.parent.parent.GetComponent<Outline>().enabled = false;
         }
     } 
 }
